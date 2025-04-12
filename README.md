@@ -668,6 +668,8 @@ const generatePolicy = (methodArn, effect, principalId = "user") => {
 
 - authorizer.mjs
 
+https://auth0.com/blog/protecting-rest-apis-behind-aws-api-gateway/
+
 ```js
 import { TextEncoder } from "util";
 import crypto from "crypto";
