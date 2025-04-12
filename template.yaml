@@ -1,0 +1,189 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  api-authorized-by-auth0
+
+Parameters:
+  DynamoTableName:
+    Type: String
+  DynamoKeyName:
+    Type: String
+  Auth0Domain:
+    Type: String
+  OIDCClientId: # React => API
+    Type: String
+  GoldMemberRoleId:
+    Type: String
+  M2MClientId: # Lambda => システムAPI
+    Type: String
+  M2MClientSecret:
+    Type: String
+
+Globals:
+  Function:
+    Timeout: 30
+    Environment:
+      Variables:
+        DYNAMO_TABLE_NAME: !Ref DynamoTableName
+        DYNAMO_KEY_NAME: !Ref DynamoKeyName
+        AUTH0_DOMAIN: !Ref Auth0Domain
+        OIDC_CLIENT_ID: !Ref OIDCClientId
+        GOLD_MEMBER_ROLE_ID: !Ref GoldMemberRoleId
+        M2M_CLIENT_ID: !Ref M2MClientId
+        M2M_CLIENT_SECRET: !Ref M2MClientSecret
+
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'content-type,authorization'"
+      AllowOrigin: "'*'"
+    Auth:
+      AddDefaultAuthorizerToCorsPreflight: false
+
+Resources:
+  # API
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Auth:
+        DefaultAuthorizer: LambdaAuthorizer
+        Authorizers:
+          LambdaAuthorizer:
+            FunctionArn: !GetAtt LambdaAuthorizer.Arn
+            Identity:
+              # 認証結果のキャッシュ秒数
+              ReauthorizeEvery: 0
+
+  # 認証・認可チェック関数
+  LambdaAuthorizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: authorizer.lambdaHandler
+      Runtime: nodejs22.x
+
+  # IAM Role 全関数共通
+  MyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: DynamoDBAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:UpdateItem
+                  - dynamodb:GetItem
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoTableName}"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "arn:aws:logs:*:*:*"
+
+  # いいね取得
+  GetLikeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: like__get.lambdaHandler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Role: !GetAtt MyRole.Arn
+      Events:
+        Event:
+          Type: Api
+          Properties:
+            Path: /likes
+            Method: get
+            RestApiId: !Ref MyApi
+            # いいね取得は誰でも出来る。認証を外す
+            Auth:
+              Authorizer: NONE
+
+  # いいね送信
+  PostLikeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: like__post.lambdaHandler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Role: !GetAtt MyRole.Arn
+      Events:
+        Event:
+          Type: Api
+          Properties:
+            Path: /likes
+            Method: post
+            RestApiId: !Ref MyApi
+
+  # いいね取り消し
+  DeleteLikeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: like__delete.lambdaHandler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Role: !GetAtt MyRole.Arn
+      Events:
+        Event:
+          Type: Api
+          Properties:
+            Path: /likes
+            Method: delete
+            RestApiId: !Ref MyApi
+
+  # ゴールド会員になる
+  RandUpFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: rank__up.lambdaHandler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Events:
+        Event:
+          Type: Api
+          Properties:
+            Path: /users/{id}/goldmember
+            Method: put
+            RestApiId: !Ref MyApi
+
+  # ゴールド会員を辞める
+  RandDownFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: rank__down.lambdaHandler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Events:
+        Event:
+          Type: Api
+          Properties:
+            Path: /users/{id}/goldmember
+            Method: delete
+            RestApiId: !Ref MyApi
+
+Outputs:
+  LikeApi:
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/likes/"
+  MemberRankApi:
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/users/1234/goldmember"
