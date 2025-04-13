@@ -163,6 +163,8 @@ or
 sam deploy --guided --profile プロファイル名
 ```
 
+## いいねのGET・POST・DELETE
+
 - template.yaml
 
 ```yaml
