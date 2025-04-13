@@ -186,6 +186,7 @@ Globals:
         DYNAMO_KEY_NAME: !Ref DynamoKeyName
 
   Api:
+    OpenApiVersion: 3.0.2
     Cors:
       AllowMethods: "'*'"
       # ReactからのリクエストヘッダーにAuthorizationを入れているため
@@ -497,6 +498,7 @@ Globals:
         OIDC_CLIENT_ID: !Ref OIDCClientId
 
   Api:
+    OpenApiVersion: 3.0.2
     Cors:
       AllowMethods: "'*'"
       AllowHeaders: "'content-type,authorization'"
