@@ -1,4 +1,4 @@
-# 手順
+# 作業手順
 
 - DynamoDBのテーブル作成（AWSマネコン）
 - Application・API作成（Auth0）
