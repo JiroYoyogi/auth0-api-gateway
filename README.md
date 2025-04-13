@@ -17,7 +17,7 @@
 - API（Auth0）
 - permission・Role（Auth0）
 
-# ReactアプリをDL
+# フロントアプリ（React）をDL
 
 [こちら](https://github.com/JiroYoyogi/auth0-app/tree/3_express_api_permission_check)よりDL 
 
