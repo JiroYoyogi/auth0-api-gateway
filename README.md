@@ -276,7 +276,11 @@ Outputs:
     Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/likes/"
 ```
 
-- like__get.mjs
+- hello-world/
+
+src/にリネーム
+
+- src/like__get.mjs
 
 ```js
 import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
@@ -330,7 +334,7 @@ export const lambdaHandler = async () => {
 };
 ```
 
-- like__post.mjs
+- src/like__post.mjs
 
 ```js
 import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
@@ -389,7 +393,7 @@ export const lambdaHandler = async () => {
 };
 ```
 
-- like__delete.mjs
+- src/like__delete.mjs
 
 ```js
 import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
