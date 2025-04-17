@@ -113,7 +113,7 @@ const generatePolicy = (methodArn, effect, principalId = "user") => {
 
 ```
 
-## アクセストークンを検証
+## アクセストークンを検証する
 
 - authorizer.mjs
 
