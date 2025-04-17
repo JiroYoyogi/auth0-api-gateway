@@ -51,7 +51,7 @@
 
 リソースへのアクセスの可否を書いたIAMポリシーをチェック関数から返す
 
-![image](./images/Auth0_API_GW.jpg)
+![image](./images/Auth0_API_GW_2.jpg)
 
 ## Allow
 

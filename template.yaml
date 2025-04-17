@@ -24,6 +24,7 @@ Globals:
         OIDC_CLIENT_ID: !Ref OIDCClientId
 
   Api:
+    OpenApiVersion: 3.0.2
     Cors:
       AllowMethods: "'*'"
       AllowHeaders: "'content-type,authorization'"
