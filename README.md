@@ -43,7 +43,7 @@
 
 # SAMプロジェクトをDL
 
-- [こちら](https://github.com/JiroYoyogi/auth0-api-gateway)よりDL
+- 右上「Code」よりDL
 
 # いいねAPI
 
