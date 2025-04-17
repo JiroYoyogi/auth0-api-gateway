@@ -12,12 +12,6 @@ Parameters:
     Type: String
   OIDCClientId: # React => API
     Type: String
-  GoldMemberRoleId:
-    Type: String
-  M2MClientId: # Lambda => システムAPI
-    Type: String
-  M2MClientSecret:
-    Type: String
 
 Globals:
   Function:
@@ -28,9 +22,6 @@ Globals:
         DYNAMO_KEY_NAME: !Ref DynamoKeyName
         AUTH0_DOMAIN: !Ref Auth0Domain
         OIDC_CLIENT_ID: !Ref OIDCClientId
-        GOLD_MEMBER_ROLE_ID: !Ref GoldMemberRoleId
-        M2M_CLIENT_ID: !Ref M2MClientId
-        M2M_CLIENT_SECRET: !Ref M2MClientSecret
 
   Api:
     Cors:
