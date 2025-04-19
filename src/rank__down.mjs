@@ -49,7 +49,7 @@ export const lambdaHandler = async (event, context) => {
       "Access-Control-Allow-Methods": "DELETE",
     },
     body: JSON.stringify({
-      message: "Ranked Up.",
+      message: "Ranked Down.",
     }),
   };
 };
