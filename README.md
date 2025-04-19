@@ -16,7 +16,7 @@
   - [公式](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html)からインストーラーでインストール可能
 - AWS SAM CLI
   - [公式](https://docs.aws.amazon.com/ja_jp/serverless-application-model/latest/developerguide/install-sam-cli.html)からインストーラーでインストール可能
-- Node.js
+- Node.js（動画ではv22.14.0）
 
 # リソースの作成
 
